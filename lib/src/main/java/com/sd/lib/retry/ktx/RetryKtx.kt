@@ -44,7 +44,8 @@ suspend fun <T> fRetry(
         if (scope.retryCount >= maxCount) {
             // 达到最大重试次数
             val cause = checkNotNull(result.exceptionOrNull())
-            return Result.failure(FRetryExceptionRetryMaxCount(cause))
+            val exception = FRetryExceptionRetryMaxCount(cause)
+            return Result.failure(exception)
         } else {
             // 延迟后继续重试
             delay(interval)

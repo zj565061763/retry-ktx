@@ -14,7 +14,7 @@ suspend fun <T> fRetry(
     /** 最多执行几次 */
     maxCount: Int = Int.MAX_VALUE,
 
-    /** 执行间隔（毫秒） */
+    /** 执行间隔(毫秒) */
     interval: Long = 3_000,
 
     /** 执行回调 */

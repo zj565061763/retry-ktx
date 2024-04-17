@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SampleActivity" />
+        <activity android:name=".SampleRetry" />
 
     </application>
 

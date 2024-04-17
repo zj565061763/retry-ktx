@@ -19,7 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class SampleActivity : ComponentActivity() {
+class SampleRetry : ComponentActivity() {
 
     private var _retryJob: Job? = null
 

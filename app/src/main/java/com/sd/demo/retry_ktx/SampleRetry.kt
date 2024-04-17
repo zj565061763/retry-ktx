@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.retry_ktx.theme.AppTheme
+import com.sd.lib.network.FNetwork
+import com.sd.lib.network.fNetworkAwait
 import com.sd.lib.retry.ktx.fRetry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -25,6 +27,10 @@ class SampleRetry : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 初始化网络库
+        FNetwork.init(this)
+
         setContent {
             AppTheme {
                 ContentView(
@@ -47,6 +53,9 @@ class SampleRetry : ComponentActivity() {
             maxCount = 15,
             interval = 1_000,
         ) {
+            // 检查网络连接
+            fNetworkAwait()
+
             logMsg { "retry $retryCount" }
             if (retryCount >= 10) {
                 "hello"

@@ -7,7 +7,7 @@ import kotlinx.coroutines.ensureActive
 
 /**
  * 执行[block]，如果[block]发生异常，会延迟[interval]之后继续执行[block]，
- * 如果达到最大执行次数[maxCount]，则返回的[Result]异常为[FRetryExceptionMaxCount]并携带最后一次失败的异常，
+ * 如果达到最大执行次数[maxCount]，则返回的[Result]异常为[FRetryExceptionMaxCount]并携带最后一次执行[block]的异常，
  * 注意：[block]抛出的[CancellationException]异常不会被捕获
  */
 suspend fun <T> fRetry(

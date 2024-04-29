@@ -11,7 +11,7 @@ suspend fun <T> fRetry(
     maxCount: Int = Int.MAX_VALUE,
 
     /** 执行间隔(毫秒) */
-    interval: Long = 3_000,
+    interval: Long = 5_000,
 
     /** 执行回调 */
     block: suspend FRetryScope.() -> T,
@@ -20,7 +20,7 @@ suspend fun <T> fRetry(
 
 ```kotlin
 interface FRetryScope {
-    /** 当前重试的次数 */
+    /** 当前重试次数 */
     val retryCount: Int
 }
 ```

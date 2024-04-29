@@ -56,7 +56,7 @@ suspend fun <T> fRetry(
 }
 
 interface FRetryScope {
-    /** 当前第几次重试 */
+    /** 当前重试次数 */
     val retryCount: Int
 }
 

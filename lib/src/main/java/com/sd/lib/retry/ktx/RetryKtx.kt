@@ -27,7 +27,7 @@ suspend fun <T> fRetry(
 
     while (true) {
         // 增加次数
-        scope.increaseRetryCount()
+        scope.increaseCount()
 
         // block
         val result = runCatching {
@@ -66,7 +66,7 @@ private class RetryScopeImpl : FRetryScope {
     override val retryCount: Int
         get() = _retryCount
 
-    fun increaseRetryCount() {
+    fun increaseCount() {
         _retryCount++
     }
 }

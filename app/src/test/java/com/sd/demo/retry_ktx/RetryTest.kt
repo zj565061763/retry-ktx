@@ -41,7 +41,7 @@ class RetryTest {
     }
 
     @Test
-    fun `test retry count`(): Unit = runBlocking {
+    fun `test count`(): Unit = runBlocking {
         val events = mutableListOf<String>()
         fRetry<String>(
             maxCount = 3,

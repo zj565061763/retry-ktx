@@ -34,7 +34,7 @@ class SampleRetry : ComponentActivity() {
         setContent {
             AppTheme {
                 ContentView(
-                    onClickRetry = {
+                    onClickStart = {
                         cancelRetry()
                         _retryJob = lifecycleScope.launch { retry() }
                     },
@@ -77,7 +77,7 @@ class SampleRetry : ComponentActivity() {
 @Composable
 private fun ContentView(
     modifier: Modifier = Modifier,
-    onClickRetry: () -> Unit,
+    onClickStart: () -> Unit,
     onClickCancel: () -> Unit,
 ) {
     Column(
@@ -85,8 +85,8 @@ private fun ContentView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Button(onClick = onClickRetry) {
-            Text(text = "Retry")
+        Button(onClick = onClickStart) {
+            Text(text = "Start")
         }
 
         Button(onClick = onClickCancel) {

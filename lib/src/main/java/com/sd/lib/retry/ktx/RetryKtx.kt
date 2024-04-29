@@ -26,7 +26,7 @@ suspend fun <T> fRetry(
     val scope = RetryScopeImpl()
 
     while (true) {
-        // 重试次数
+        // 增加次数
         scope.increaseRetryCount()
 
         // block

@@ -15,12 +15,13 @@ suspend fun <T> fRetry(
     maxCount: Int = Int.MAX_VALUE,
 
     /** 执行间隔(毫秒) */
-    interval: Long = 3_000,
+    interval: Long = 5_000,
 
     /** 执行回调 */
     block: suspend FRetryScope.() -> T,
 ): Result<T> {
     require(maxCount > 0)
+    require(interval > 0)
 
     val scope = RetryScopeImpl()
 
@@ -55,14 +56,15 @@ suspend fun <T> fRetry(
 }
 
 interface FRetryScope {
-    /** 当前重试的次数 */
+    /** 当前第几次重试 */
     val retryCount: Int
 }
 
 private class RetryScopeImpl : FRetryScope {
     private var _retryCount = 0
 
-    override val retryCount: Int get() = _retryCount
+    override val retryCount: Int
+        get() = _retryCount
 
     fun increaseRetryCount() {
         _retryCount++

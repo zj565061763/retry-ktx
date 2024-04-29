@@ -47,7 +47,7 @@ class RetryTest {
             maxCount = 3,
             interval = 100,
         ) {
-            events.add(retryCount.toString())
+            events.add(currentCount.toString())
             error("error")
         }
         assertEquals(listOf("1", "2", "3"), events)

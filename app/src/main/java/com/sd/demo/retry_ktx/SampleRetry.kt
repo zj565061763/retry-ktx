@@ -56,11 +56,11 @@ class SampleRetry : ComponentActivity() {
             // 检查网络连接
             fNetworkAwait()
 
-            logMsg { "retry $retryCount" }
-            if (retryCount >= 10) {
+            logMsg { "retry $currentCount" }
+            if (currentCount >= 10) {
                 "hello"
             } else {
-                error("failure $retryCount")
+                error("failure $currentCount")
             }
         }.onSuccess {
             logMsg { "$uuid onSuccess $it" }

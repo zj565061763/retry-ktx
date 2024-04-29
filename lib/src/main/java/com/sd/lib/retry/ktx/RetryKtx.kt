@@ -42,7 +42,7 @@ suspend fun <T> fRetry(
             return result
         }
 
-        if (scope.retryCount >= maxCount) {
+        if (scope.currentCount >= maxCount) {
             // 达到最大执行次数
             val cause = checkNotNull(result.exceptionOrNull())
             val exception = FRetryExceptionMaxCount(cause)
@@ -57,17 +57,17 @@ suspend fun <T> fRetry(
 
 interface FRetryScope {
     /** 当前执行次数 */
-    val retryCount: Int
+    val currentCount: Int
 }
 
 private class RetryScopeImpl : FRetryScope {
-    private var _retryCount = 0
+    private var _count = 0
 
-    override val retryCount: Int
-        get() = _retryCount
+    override val currentCount: Int
+        get() = _count
 
     fun increaseCount() {
-        _retryCount++
+        _count++
     }
 }
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.ensureActive
  * 注意：[block]抛出的[CancellationException]异常不会被捕获
  */
 suspend fun <T> fRetry(
-    /** 最多执行次数 */
+    /** 最大执行次数 */
     maxCount: Int = Int.MAX_VALUE,
 
     /** 执行间隔(毫秒) */
@@ -43,12 +43,12 @@ suspend fun <T> fRetry(
         }
 
         if (scope.retryCount >= maxCount) {
-            // 达到最大重试次数
+            // 达到最大执行次数
             val cause = checkNotNull(result.exceptionOrNull())
             val exception = FRetryExceptionMaxCount(cause)
             return Result.failure(exception)
         } else {
-            // 延迟后继续重试
+            // 延迟后继续执行
             delay(interval)
             continue
         }
@@ -56,7 +56,7 @@ suspend fun <T> fRetry(
 }
 
 interface FRetryScope {
-    /** 当前重试次数 */
+    /** 当前执行次数 */
     val retryCount: Int
 }
 

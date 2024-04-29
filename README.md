@@ -2,12 +2,12 @@
 
 ```kotlin
 /**
- * 执行重试逻辑，如果[block]发生异常，会延迟[interval]之后继续调用[block]重试，
- * 如果达到最大重试次数[maxCount]，则返回的[Result]异常为[FRetryExceptionRetryMaxCount]并携带最后一次失败的异常，
+ * 执行[block]，如果[block]发生异常，会延迟[interval]之后继续执行[block]，
+ * 如果达到最大执行次数[maxCount]，则返回的[Result]异常为[FRetryExceptionMaxCount]并携带最后一次失败的异常，
  * 注意：[block]抛出的[CancellationException]异常不会被捕获
  */
 suspend fun <T> fRetry(
-    /** 最多执行几次 */
+    /** 最多执行次数 */
     maxCount: Int = Int.MAX_VALUE,
 
     /** 执行间隔(毫秒) */
@@ -20,14 +20,14 @@ suspend fun <T> fRetry(
 
 ```kotlin
 interface FRetryScope {
-    /** 当前重试次数 */
+    /** 当前执行次数 */
     val retryCount: Int
 }
 ```
 
 ```kotlin
 /**
- * 达到最大重试次数
+ * 达到最大执行次数
  */
 class FRetryExceptionRetryMaxCount(cause: Throwable) : Exception(cause)
 ```

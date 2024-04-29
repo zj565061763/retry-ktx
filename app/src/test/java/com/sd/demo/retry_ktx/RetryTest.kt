@@ -1,6 +1,6 @@
 package com.sd.demo.retry_ktx
 
-import com.sd.lib.retry.ktx.FRetryExceptionRetryMaxCount
+import com.sd.lib.retry.ktx.FRetryExceptionMaxCount
 import com.sd.lib.retry.ktx.fRetry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ class RetryTest {
         ) {
             error("error")
         }
-        val exception = result.exceptionOrNull() as FRetryExceptionRetryMaxCount
+        val exception = result.exceptionOrNull() as FRetryExceptionMaxCount
         assertEquals("error", exception.cause?.message)
     }
 

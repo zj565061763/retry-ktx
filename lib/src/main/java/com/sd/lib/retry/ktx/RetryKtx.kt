@@ -6,8 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 
 /**
- * 执行重试逻辑，如果[block]发生异常，会延迟[interval]之后继续调用[block]重试，
- * 如果达到最大重试次数[maxCount]，则返回的[Result]异常为[FRetryExceptionRetryMaxCount]并携带最后一次失败的异常，
+ * 执行[block]，如果[block]发生异常，会延迟[interval]之后继续调用[block]，
+ * 如果达到最大执行次数[maxCount]，则返回的[Result]异常为[FRetryExceptionMaxCount]并携带最后一次失败的异常，
  * 注意：[block]抛出的[CancellationException]异常不会被捕获
  */
 suspend fun <T> fRetry(
@@ -45,7 +45,7 @@ suspend fun <T> fRetry(
         if (scope.retryCount >= maxCount) {
             // 达到最大重试次数
             val cause = checkNotNull(result.exceptionOrNull())
-            val exception = FRetryExceptionRetryMaxCount(cause)
+            val exception = FRetryExceptionMaxCount(cause)
             return Result.failure(exception)
         } else {
             // 延迟后继续重试
@@ -72,6 +72,6 @@ private class RetryScopeImpl : FRetryScope {
 }
 
 /**
- * 达到最大重试次数
+ * 达到最大执行次数
  */
-class FRetryExceptionRetryMaxCount(cause: Throwable) : Exception(cause)
+class FRetryExceptionMaxCount(cause: Throwable) : Exception(cause)

@@ -46,15 +46,27 @@ class RetryTest {
         fRetry<String>(
             maxCount = 3,
             interval = 100,
+        ) {
+            events.add(currentCount.toString())
+            error("error")
+        }
+        assertEquals("1|2|3", events.joinToString("|"))
+    }
+
+    @Test
+    fun `test onFailure`(): Unit = runBlocking {
+        val events = mutableListOf<String>()
+        fRetry<String>(
+            maxCount = 3,
+            interval = 100,
             onFailure = {
                 assertEquals(true, it is IllegalStateException)
                 events.add(it.message!!)
             },
         ) {
-            events.add(currentCount.toString())
             error("error")
         }
-        assertEquals("1|error|2|error|3|error", events.joinToString("|"))
+        assertEquals("error|error|error", events.joinToString("|"))
     }
 
     @Test
@@ -67,5 +79,22 @@ class RetryTest {
             "success"
         }
         assertEquals("beforeBlock|block", events.joinToString("|"))
+    }
+
+    @Test
+    fun `test beforeBlock error`(): Unit = runBlocking {
+        val events = mutableListOf<String>()
+
+        try {
+            fRetry(
+                beforeBlock = { error("beforeBlock error") },
+            ) {
+                "success"
+            }
+        } catch (e: Throwable) {
+            events.add(e.message!!)
+        }
+
+        assertEquals("beforeBlock error", events.joinToString("|"))
     }
 }

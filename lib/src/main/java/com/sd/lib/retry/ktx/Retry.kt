@@ -22,7 +22,7 @@ suspend fun <T> fRetry(
     onFailure: FRetryScope.(Throwable) -> Unit = {},
 
     /** 在[block]回调之前执行 */
-    beforeBlock: suspend FRetryScope.() -> Unit,
+    beforeBlock: suspend FRetryScope.() -> Unit = {},
 
     /** 执行回调 */
     block: suspend FRetryScope.() -> T,

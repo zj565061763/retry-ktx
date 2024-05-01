@@ -56,4 +56,16 @@ class RetryTest {
         }
         assertEquals("1|error|2|error|3|error", events.joinToString("|"))
     }
+
+    @Test
+    fun `test beforeBlock`(): Unit = runBlocking {
+        val events = mutableListOf<String>()
+        fRetry(
+            beforeBlock = { events.add("beforeBlock") },
+        ) {
+            events.add("block")
+            "success"
+        }
+        assertEquals("beforeBlock|block", events.joinToString("|"))
+    }
 }

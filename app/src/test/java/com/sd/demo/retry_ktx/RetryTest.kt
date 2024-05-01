@@ -46,10 +46,14 @@ class RetryTest {
         fRetry<String>(
             maxCount = 3,
             interval = 100,
+            onFailure = {
+                assertEquals(true, it is IllegalStateException)
+                events.add(it.message!!)
+            },
         ) {
             events.add(currentCount.toString())
             error("error")
         }
-        assertEquals(listOf("1", "2", "3"), events)
+        assertEquals("1|error|2|error|3|error", events.joinToString("|"))
     }
 }

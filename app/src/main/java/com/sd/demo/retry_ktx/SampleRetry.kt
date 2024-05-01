@@ -47,6 +47,7 @@ class SampleRetry : ComponentActivity() {
         fRetry(
             maxCount = 15,
             interval = 1_000,
+            onFailure = { logMsg { "onFailure:$it" } },
         ) {
             // 检查网络连接
             fNetworkAwait()

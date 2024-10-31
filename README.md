@@ -7,21 +7,21 @@
  * 注意：[block]抛出的[CancellationException]异常不会被捕获
  */
 suspend fun <T> fRetry(
-    /** 最大执行次数 */
-    maxCount: Int = Int.MAX_VALUE,
+   /** 最大执行次数 */
+   maxCount: Int = Int.MAX_VALUE,
 
-    /** 执行间隔(毫秒) */
-    interval: Long = 5_000,
+   /** 执行间隔(毫秒) */
+   interval: Long = 5_000,
 
-    /** 执行回调 */
-    block: suspend FRetryScope.() -> T,
+   /** 执行回调 */
+   block: suspend FRetryScope.() -> T,
 ): Result<T>
 ```
 
 ```kotlin
 interface FRetryScope {
-    /** 当前执行次数 */
-    val currentCount: Int
+   /** 当前执行次数 */
+   val currentCount: Int
 }
 ```
 

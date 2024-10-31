@@ -39,7 +39,8 @@ class SampleRetry : ComponentActivity() {
                   }
                },
                onClickCancel = {
-                  cancelRetry()
+                  _retryJob?.cancel()
+                  _retryJob = null
                },
             )
          }
@@ -68,11 +69,6 @@ class SampleRetry : ComponentActivity() {
       }.onFailure { error ->
          logMsg { "onFailure $error" }
       }
-   }
-
-   private fun cancelRetry() {
-      _retryJob?.cancel()
-      _retryJob = null
    }
 }
 

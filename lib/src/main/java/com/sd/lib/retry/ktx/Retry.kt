@@ -25,36 +25,37 @@ suspend inline fun <T> fRetry(
    block: FRetryScope.() -> T,
 ): Result<T> {
    require(maxCount > 0)
+   with(RetryScopeImpl()) {
+      while (true) {
+         // 增加次数
+         increaseCount()
 
-   val scope = RetryScopeImpl()
+         val result = runCatching {
+            block()
+         }.onFailure { e ->
+            // 如果是取消异常，则抛出
+            if (e is CancellationException) throw e
+         }
 
-   while (true) {
-      // 增加次数
-      scope.increaseCount()
+         currentCoroutineContext().ensureActive()
+         if (result.isSuccess) {
+            return result
+         }
 
-      val result = runCatching {
-         with(scope) { block() }
-      }.onFailure { e ->
-         // 如果是取消异常，则抛出
-         if (e is CancellationException) throw e
-      }
+         val exception = checkNotNull(result.exceptionOrNull())
+         val shouldContinue = onFailure(exception).also { currentCoroutineContext().ensureActive() }
+         if (!shouldContinue) {
+            return result
+         }
 
-      currentCoroutineContext().ensureActive()
-      if (result.isSuccess) {
-         return result
-      }
-
-      val exception = checkNotNull(result.exceptionOrNull())
-      with(scope) { onFailure(exception) }
-
-      if (scope.currentCount >= maxCount) {
-         // 达到最大执行次数
-         return Result.failure(FRetryExceptionMaxCount(exception))
-      } else {
-         // 延迟后继续执行
-         val interval = with(scope) { getInterval() }
-         delay(interval)
-         continue
+         if (currentCount >= maxCount) {
+            // 达到最大执行次数
+            return Result.failure(FRetryExceptionMaxCount(exception))
+         } else {
+            // 延迟后继续执行
+            delay(getInterval())
+            continue
+         }
       }
    }
 }

@@ -4,13 +4,13 @@ import com.sd.lib.retry.ktx.RetryMaxCountException
 import com.sd.lib.retry.ktx.fRetry
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class RetryTest {
    @Test
-   fun `test success`(): Unit = runBlocking {
+   fun `test success`() = runTest {
       val result = fRetry {
          "success"
       }
@@ -18,19 +18,16 @@ class RetryTest {
    }
 
    @Test
-   fun `test error`(): Unit = runBlocking {
-      val result = fRetry<String>(
-         maxCount = 3,
-         interval = 100,
-      ) {
-         error("error")
+   fun `test error`() = runTest {
+      val result = fRetry(maxCount = 99) {
+         error("error $currentCount")
       }
       val exception = result.exceptionOrNull() as RetryMaxCountException
-      assertEquals("error", exception.cause?.message)
+      assertEquals("error 99", exception.cause?.message)
    }
 
    @Test
-   fun `test cancel`(): Unit = runBlocking {
+   fun `test cancel`() = runTest {
       val job = launch {
          fRetry { throw CancellationException() }
       }.also {
@@ -41,24 +38,20 @@ class RetryTest {
    }
 
    @Test
-   fun `test count`(): Unit = runBlocking {
+   fun `test count`() = runTest {
       val events = mutableListOf<String>()
-      fRetry<String>(
-         maxCount = 3,
-         interval = 100,
-      ) {
+      fRetry<String>(maxCount = 5) {
          events.add(currentCount.toString())
          error("error")
       }
-      assertEquals("1|2|3", events.joinToString("|"))
+      assertEquals("1|2|3|4|5", events.joinToString("|"))
    }
 
    @Test
-   fun `test onFailure`(): Unit = runBlocking {
+   fun `test onFailure`() = runTest {
       val events = mutableListOf<String>()
       fRetry<String>(
          maxCount = 3,
-         interval = 100,
          onFailure = {
             assertEquals(true, it is IllegalStateException)
             events.add(it.message!!)
@@ -67,34 +60,5 @@ class RetryTest {
          error("error")
       }
       assertEquals("error|error|error", events.joinToString("|"))
-   }
-
-   @Test
-   fun `test beforeBlock`(): Unit = runBlocking {
-      val events = mutableListOf<String>()
-      fRetry(
-         beforeBlock = { events.add("beforeBlock") },
-      ) {
-         events.add("block")
-         "success"
-      }
-      assertEquals("beforeBlock|block", events.joinToString("|"))
-   }
-
-   @Test
-   fun `test beforeBlock error`(): Unit = runBlocking {
-      val events = mutableListOf<String>()
-
-      try {
-         fRetry(
-            beforeBlock = { error("beforeBlock error") },
-         ) {
-            "success"
-         }
-      } catch (e: Throwable) {
-         events.add(e.message!!)
-      }
-
-      assertEquals("beforeBlock error", events.joinToString("|"))
    }
 }

@@ -48,7 +48,7 @@ class SampleRetry : ComponentActivity() {
       logMsg { "$uuid start" }
       fRetry(
          maxCount = 5,
-         getInterval = { 3_000 },
+         getDelay = { 3_000 },
          onFailure = {
             logMsg { "onFailure:$it" }
             true

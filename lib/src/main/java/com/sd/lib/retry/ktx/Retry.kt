@@ -13,7 +13,7 @@ import kotlinx.coroutines.ensureActive
  */
 suspend fun <T> fRetry(
    /** 最大执行次数 */
-   maxCount: Int = Int.MAX_VALUE,
+   maxCount: Int = 3,
 
    /** 执行间隔(毫秒) */
    interval: Long = 5_000,

@@ -18,7 +18,6 @@ import com.sd.lib.network.fNetwork
 import com.sd.lib.retry.ktx.fRetry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class SampleRetry : ComponentActivity() {
    private var _retryJob: Job? = null
@@ -44,8 +43,6 @@ class SampleRetry : ComponentActivity() {
    }
 
    private suspend fun retry() {
-      val uuid = UUID.randomUUID().toString()
-      logMsg { "$uuid start" }
       fRetry(
          maxCount = 5,
          getDelay = { 3_000 },
@@ -63,9 +60,9 @@ class SampleRetry : ComponentActivity() {
             error("failure $currentCount")
          }
       }.onSuccess { data ->
-         logMsg { "$uuid onSuccess $data" }
+         logMsg { "onSuccess $data" }
       }.onFailure { error ->
-         logMsg { "$uuid onFailure $error" }
+         logMsg { "onFailure $error" }
       }
    }
 

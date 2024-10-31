@@ -63,4 +63,20 @@ class RetryTest {
       }
       assertEquals("error 1|error 2|error 3", events.joinToString("|"))
    }
+
+   @Test
+   fun `test onFailure false`() = runTest {
+      val events = mutableListOf<String>()
+      fRetry(
+         maxCount = Int.MAX_VALUE,
+         onFailure = {
+            assertEquals(true, it.message == "error $currentCount")
+            events.add(it.message!!)
+            currentCount < 3
+         },
+      ) {
+         error("error $currentCount")
+      }
+      assertEquals("error 1|error 2|error 3", events.joinToString("|"))
+   }
 }

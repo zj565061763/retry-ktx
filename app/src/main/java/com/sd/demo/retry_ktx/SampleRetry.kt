@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class SampleRetry : ComponentActivity() {
-
    private var _retryJob: Job? = null
 
    override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,23 +44,26 @@ class SampleRetry : ComponentActivity() {
       val uuid = UUID.randomUUID().toString()
       logMsg { "$uuid start" }
       fRetry(
-         maxCount = 15,
-         interval = 1_000,
-         onFailure = { logMsg { "onFailure:$it" } },
+         maxCount = 10,
+         getInterval = { 1_000 },
+         onFailure = {
+            logMsg { "onFailure:$it" }
+            true
+         },
       ) {
          // 检查网络连接
          fNetworkAwait()
 
          logMsg { "retry $currentCount" }
-         if (currentCount >= 10) {
+         if (currentCount >= 5) {
             "hello"
          } else {
             error("failure $currentCount")
          }
-      }.onSuccess {
-         logMsg { "$uuid onSuccess $it" }
-      }.onFailure {
-         logMsg { "$uuid onFailure $it" }
+      }.onSuccess { data ->
+         logMsg { "$uuid onSuccess $data" }
+      }.onFailure { error ->
+         logMsg { "$uuid onFailure $error" }
       }
    }
 

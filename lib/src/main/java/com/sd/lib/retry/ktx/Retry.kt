@@ -6,29 +6,25 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 
 /**
- * 执行[block]，[block]发生的异常会被捕获([CancellationException]异常除外)并通知[onFailure]，[onFailure]的异常不会被捕获，
- * [block]发生异常之后，如果未达到最大执行次数[maxCount]，延迟[interval]之后继续执行[block]；
- * 如果达到最大执行次数[maxCount]，则返回的[Result]异常为[FRetryExceptionMaxCount]并携带最后一次的异常，
- * [beforeBlock]在[block]回调之前执行，[beforeBlock]发生的异常不会被捕获
+ * 执行[block]，[block]发生异常之后会被捕获并通知[onFailure] ([CancellationException]异常除外)，
+ * 如果[onFailure]返回false则停止重试并返回失败结果；
+ * 如果[onFailure]返回true则继续执行后面的逻辑，如果未达到最大执行次数[maxCount]，延迟[getInterval]之后继续执行[block]；
+ * 如果达到最大执行次数[maxCount]，则返回失败结果，异常为[FRetryExceptionMaxCount]并携带最后一次的异常。
  */
-suspend fun <T> fRetry(
+suspend inline fun <T> fRetry(
    /** 最大执行次数 */
    maxCount: Int = 3,
 
-   /** 执行间隔(毫秒) */
-   interval: Long = 5_000,
+   /** 获取执行间隔(毫秒) */
+   getInterval: FRetryScope.() -> Long = { 5_000 },
 
-   /** 失败回调 */
-   onFailure: FRetryScope.(Throwable) -> Unit = {},
-
-   /** 在[block]回调之前执行 */
-   beforeBlock: suspend FRetryScope.() -> Unit = {},
+   /** 失败回调，返回false停止重试 */
+   onFailure: FRetryScope.(Throwable) -> Boolean = { true },
 
    /** 执行回调 */
-   block: suspend FRetryScope.() -> T,
+   block: FRetryScope.() -> T,
 ): Result<T> {
    require(maxCount > 0)
-   require(interval > 0)
 
    val scope = RetryScopeImpl()
 
@@ -36,11 +32,6 @@ suspend fun <T> fRetry(
       // 增加次数
       scope.increaseCount()
 
-      // before block
-      with(scope) { beforeBlock() }
-      currentCoroutineContext().ensureActive()
-
-      // block
       val result = runCatching {
          with(scope) { block() }
       }.onFailure { e ->
@@ -61,6 +52,7 @@ suspend fun <T> fRetry(
          return Result.failure(FRetryExceptionMaxCount(exception))
       } else {
          // 延迟后继续执行
+         val interval = with(scope) { getInterval() }
          delay(interval)
          continue
       }
@@ -72,7 +64,8 @@ interface FRetryScope {
    val currentCount: Int
 }
 
-private class RetryScopeImpl : FRetryScope {
+@PublishedApi
+internal class RetryScopeImpl : FRetryScope {
    private var _count = 0
 
    override val currentCount: Int

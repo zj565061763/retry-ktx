@@ -42,7 +42,7 @@ class RetryTest {
    @Test
    fun `test count`() = runTest {
       val events = mutableListOf<String>()
-      fRetry<String>(maxCount = 5) {
+      fRetry(maxCount = 5) {
          events.add(currentCount.toString())
          error("error")
       }
@@ -52,15 +52,15 @@ class RetryTest {
    @Test
    fun `test onFailure`() = runTest {
       val events = mutableListOf<String>()
-      fRetry<String>(
+      fRetry(
          maxCount = 3,
          onFailure = {
-            assertEquals(true, it is IllegalStateException)
+            assertEquals(true, it.message == "error $currentCount")
             events.add(it.message!!)
          },
       ) {
-         error("error")
+         error("error $currentCount")
       }
-      assertEquals("error|error|error", events.joinToString("|"))
+      assertEquals("error 1|error 2|error 3", events.joinToString("|"))
    }
 }

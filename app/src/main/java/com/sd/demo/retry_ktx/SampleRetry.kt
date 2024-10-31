@@ -29,8 +29,11 @@ class SampleRetry : ComponentActivity() {
          AppTheme {
             ContentView(
                onClickStart = {
-                  cancelRetry()
-                  _retryJob = lifecycleScope.launch { retry() }
+                  if (_retryJob == null) {
+                     _retryJob = lifecycleScope.launch {
+                        retry()
+                     }
+                  }
                },
                onClickCancel = {
                   cancelRetry()
@@ -68,6 +71,7 @@ class SampleRetry : ComponentActivity() {
 
    private fun cancelRetry() {
       _retryJob?.cancel()
+      _retryJob = null
    }
 }
 

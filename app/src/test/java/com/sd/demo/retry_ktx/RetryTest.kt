@@ -28,13 +28,15 @@ class RetryTest {
 
    @Test
    fun `test cancel`() = runTest {
-      val job = launch {
-         fRetry { throw CancellationException() }
-      }.also {
-         it.join()
+      launch {
+         fRetry {
+            throw CancellationException()
+         }
+      }.also { job ->
+         job.join()
+         assertEquals(true, job.isCompleted)
+         assertEquals(true, job.isCancelled)
       }
-      assertEquals(true, job.isCompleted)
-      assertEquals(true, job.isCancelled)
    }
 
    @Test

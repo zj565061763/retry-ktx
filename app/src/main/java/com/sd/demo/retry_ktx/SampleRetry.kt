@@ -65,9 +65,9 @@ class SampleRetry : ComponentActivity() {
             error("failure $currentCount")
          }
       }.onSuccess { data ->
-         logMsg { "onSuccess $data" }
+         logMsg { "success $data" }
       }.onFailure { error ->
-         logMsg { "onFailure $error" }
+         logMsg { "failure $error" }
       }
    }
 }

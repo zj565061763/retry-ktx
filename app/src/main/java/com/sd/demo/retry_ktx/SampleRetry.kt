@@ -31,6 +31,10 @@ class SampleRetry : ComponentActivity() {
                   if (_retryJob == null) {
                      _retryJob = lifecycleScope.launch {
                         retry()
+                     }.also {
+                        it.invokeOnCompletion {
+                           _retryJob = null
+                        }
                      }
                   }
                },

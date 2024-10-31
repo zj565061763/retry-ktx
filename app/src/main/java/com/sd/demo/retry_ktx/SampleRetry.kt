@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.retry_ktx.theme.AppTheme
-import com.sd.lib.network.fNetworkAwait
+import com.sd.lib.network.fNetwork
 import com.sd.lib.retry.ktx.fRetry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -44,18 +44,17 @@ class SampleRetry : ComponentActivity() {
       val uuid = UUID.randomUUID().toString()
       logMsg { "$uuid start" }
       fRetry(
-         maxCount = 10,
-         getInterval = { 1_000 },
+         maxCount = 5,
+         getInterval = { 3_000 },
          onFailure = {
             logMsg { "onFailure:$it" }
             true
          },
       ) {
-         // 检查网络连接
-         fNetworkAwait()
-
          logMsg { "retry $currentCount" }
-         if (currentCount >= 5) {
+         // 检查网络连接
+         fNetwork()
+         if (currentCount >= 4) {
             "hello"
          } else {
             error("failure $currentCount")

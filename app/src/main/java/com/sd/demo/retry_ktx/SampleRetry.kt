@@ -14,8 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.retry_ktx.theme.AppTheme
-import com.sd.lib.network.fNetwork
-import com.sd.lib.retry.ktx.fRetry
+import com.sd.lib.retry.ktx.fNetRetry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -48,7 +47,7 @@ class SampleRetry : ComponentActivity() {
    }
 
    private suspend fun retry() {
-      fRetry(
+      fNetRetry(
          maxCount = 5,
          getDelay = { 3_000 },
          onFailure = {
@@ -57,8 +56,6 @@ class SampleRetry : ComponentActivity() {
          },
       ) {
          logMsg { "retry $currentCount" }
-         // 检查网络连接
-         fNetwork()
          if (currentCount >= 4) {
             "hello"
          } else {

@@ -7,11 +7,11 @@ import java.net.SocketTimeoutException
 /**
  * 网络已连接的情况下才执行，执行逻辑参考[fRetry]
  */
-suspend inline fun <T> fNetRetry(
+suspend fun <T> fNetRetry(
    maxCount: Int = 3,
    getDelay: RetryScope.() -> Long = { 5_000 },
    onFailure: RetryScope.(Throwable) -> Boolean = { shouldRetry(it) },
-   block: RetryScope.() -> T,
+   block: suspend RetryScope.() -> T,
 ): Result<T> {
    return fRetry(
       maxCount = maxCount,
@@ -24,8 +24,7 @@ suspend inline fun <T> fNetRetry(
    )
 }
 
-@PublishedApi
-internal fun shouldRetry(throwable: Throwable): Boolean {
+private fun shouldRetry(throwable: Throwable): Boolean {
    if (throwable is SocketTimeoutException) return true
    return !FNetwork.currentNetwork.isConnected()
 }

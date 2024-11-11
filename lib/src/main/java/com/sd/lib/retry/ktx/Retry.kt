@@ -11,7 +11,7 @@ import kotlinx.coroutines.ensureActive
  * 如果[onFailure]返回true则继续执行后面的逻辑，如果未达到最大执行次数[maxCount]，延迟[getDelay]之后继续执行[block]；
  * 如果达到最大执行次数[maxCount]，则返回失败结果，异常为[RetryMaxCountException]并携带最后一次的异常。
  */
-suspend inline fun <T> fRetry(
+suspend fun <T> fRetry(
    /** 最大执行次数 */
    maxCount: Int = 3,
 
@@ -22,7 +22,7 @@ suspend inline fun <T> fRetry(
    onFailure: RetryScope.(Throwable) -> Boolean = { true },
 
    /** 执行回调 */
-   block: RetryScope.() -> T,
+   block: suspend RetryScope.() -> T,
 ): Result<T> {
    require(maxCount > 0)
    with(RetryScopeImpl()) {
@@ -60,13 +60,15 @@ suspend inline fun <T> fRetry(
    }
 }
 
+/** 达到最大执行次数异常 */
+class RetryMaxCountException(cause: Throwable) : Exception(cause)
+
 interface RetryScope {
    /** 当前执行次数 */
    val currentCount: Int
 }
 
-@PublishedApi
-internal class RetryScopeImpl : RetryScope {
+private class RetryScopeImpl : RetryScope {
    private var _count = 0
 
    override val currentCount: Int
@@ -76,8 +78,3 @@ internal class RetryScopeImpl : RetryScope {
       _count++
    }
 }
-
-/**
- * 达到最大执行次数异常
- */
-class RetryMaxCountException(cause: Throwable) : Exception(cause)

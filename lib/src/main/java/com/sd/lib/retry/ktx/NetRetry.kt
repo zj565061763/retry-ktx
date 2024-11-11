@@ -26,5 +26,5 @@ suspend fun <T> fNetRetry(
 
 private fun shouldRetry(throwable: Throwable): Boolean {
    if (throwable is SocketTimeoutException) return true
-   return !FNetwork.currentNetwork.isConnected()
+   return !FNetwork.currentNetwork.isConnected
 }

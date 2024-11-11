@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-   implementation(libs.sd.network)
+   api(libs.sd.network)
 }
 
 publishing {

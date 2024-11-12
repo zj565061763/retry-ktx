@@ -14,13 +14,10 @@ import kotlinx.coroutines.ensureActive
 suspend fun <T> fRetry(
    /** 最大执行次数 */
    maxCount: Int = 3,
-
    /** 获取延迟毫秒 */
    getDelay: RetryScope.() -> Long = { 5_000 },
-
    /** 失败回调，返回false停止执行 */
    onFailure: RetryScope.(Throwable) -> Boolean = { true },
-
    /** 执行回调 */
    block: suspend RetryScope.() -> T,
 ): Result<T> {
@@ -33,7 +30,6 @@ suspend fun <T> fRetry(
          val result = runCatching {
             block()
          }.onFailure { e ->
-            // 如果是取消异常，则抛出
             if (e is CancellationException) throw e
          }
 

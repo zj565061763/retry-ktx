@@ -1,7 +1,7 @@
 package com.sd.lib.retry.ktx
 
 import com.sd.lib.network.FNetwork
-import com.sd.lib.network.fNetwork
+import com.sd.lib.network.fAwaitNetwork
 import java.net.SocketTimeoutException
 
 /**
@@ -18,7 +18,7 @@ suspend fun <T> fNetRetry(
       getDelay = getDelay,
       onFailure = onFailure,
       block = {
-         fNetwork()
+         fAwaitNetwork()
          block()
       },
    )

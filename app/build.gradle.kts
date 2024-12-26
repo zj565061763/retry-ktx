@@ -8,7 +8,7 @@ android {
   compileSdk = libs.versions.androidCompileSdk.get().toInt()
   defaultConfig {
     targetSdk = libs.versions.androidCompileSdk.get().toInt()
-    minSdk = 23
+    minSdk = 24
     applicationId = "com.sd.demo.retry_ktx"
     versionCode = 1
     versionName = "1.0"

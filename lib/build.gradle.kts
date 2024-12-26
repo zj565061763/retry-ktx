@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-  implementation(libs.kotlinx.coroutines)
+  compileOnly(libs.kotlinx.coroutines)
   api(libs.sd.network)
 }
 

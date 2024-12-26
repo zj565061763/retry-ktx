@@ -6,7 +6,7 @@ plugins {
 
 val libGroupId = "com.sd.lib.android"
 val libArtifactId = "retry-ktx"
-val libVersion = "1.2.6"
+val libVersion = "1.3.0"
 
 android {
   namespace = "com.sd.lib.retry.ktx"

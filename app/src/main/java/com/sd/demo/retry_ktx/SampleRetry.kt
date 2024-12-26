@@ -19,73 +19,73 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SampleRetry : ComponentActivity() {
-   private var _retryJob: Job? = null
+  private var _retryJob: Job? = null
 
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContent {
-         AppTheme {
-            ContentView(
-               onClickStart = {
-                  if (_retryJob == null) {
-                     _retryJob = lifecycleScope.launch {
-                        retry()
-                     }.also {
-                        it.invokeOnCompletion {
-                           _retryJob = null
-                        }
-                     }
-                  }
-               },
-               onClickCancel = {
-                  _retryJob?.cancel()
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      AppTheme {
+        ContentView(
+          onClickStart = {
+            if (_retryJob == null) {
+              _retryJob = lifecycleScope.launch {
+                retry()
+              }.also {
+                it.invokeOnCompletion {
                   _retryJob = null
-               },
-            )
-         }
+                }
+              }
+            }
+          },
+          onClickCancel = {
+            _retryJob?.cancel()
+            _retryJob = null
+          },
+        )
       }
-   }
+    }
+  }
 
-   private suspend fun retry() {
-      fNetRetry(
-         maxCount = 5,
-         getDelay = { 3_000 },
-         onFailure = {
-            logMsg { "onFailure:$it" }
-            true
-         },
-      ) {
-         logMsg { "retry $currentCount" }
-         if (currentCount >= 4) {
-            "hello"
-         } else {
-            error("failure $currentCount")
-         }
-      }.onSuccess { data ->
-         logMsg { "success $data" }
-      }.onFailure { error ->
-         logMsg { "failure $error" }
+  private suspend fun retry() {
+    fNetRetry(
+      maxCount = 5,
+      getDelay = { 3_000 },
+      onFailure = {
+        logMsg { "onFailure:$it" }
+        true
+      },
+    ) {
+      logMsg { "retry $currentCount" }
+      if (currentCount >= 4) {
+        "hello"
+      } else {
+        error("failure $currentCount")
       }
-   }
+    }.onSuccess { data ->
+      logMsg { "success $data" }
+    }.onFailure { error ->
+      logMsg { "failure $error" }
+    }
+  }
 }
 
 @Composable
 private fun ContentView(
-   modifier: Modifier = Modifier,
-   onClickStart: () -> Unit,
-   onClickCancel: () -> Unit,
+  modifier: Modifier = Modifier,
+  onClickStart: () -> Unit,
+  onClickCancel: () -> Unit,
 ) {
-   Column(
-      modifier = modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(10.dp),
-   ) {
-      Button(onClick = onClickStart) {
-         Text(text = "Start")
-      }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(10.dp),
+  ) {
+    Button(onClick = onClickStart) {
+      Text(text = "Start")
+    }
 
-      Button(onClick = onClickCancel) {
-         Text(text = "Cancel")
-      }
-   }
+    Button(onClick = onClickCancel) {
+      Text(text = "Cancel")
+    }
+  }
 }

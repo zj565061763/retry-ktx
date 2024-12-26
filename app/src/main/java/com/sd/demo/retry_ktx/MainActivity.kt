@@ -20,43 +20,43 @@ import androidx.compose.ui.unit.dp
 import com.sd.demo.retry_ktx.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContent {
-         AppTheme {
-            Content(
-               listActivity = listOf(
-                  SampleRetry::class.java,
-               ),
-               onClickActivity = {
-                  startActivity(Intent(this, it))
-               },
-            )
-         }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      AppTheme {
+        Content(
+          listActivity = listOf(
+            SampleRetry::class.java,
+          ),
+          onClickActivity = {
+            startActivity(Intent(this, it))
+          },
+        )
       }
-   }
+    }
+  }
 }
 
 @Composable
 private fun Content(
-   listActivity: List<Class<out Activity>>,
-   onClickActivity: (Class<out Activity>) -> Unit,
+  listActivity: List<Class<out Activity>>,
+  onClickActivity: (Class<out Activity>) -> Unit,
 ) {
-   LazyColumn(
-      modifier = Modifier
-         .fillMaxSize()
-         .statusBarsPadding(),
-      verticalArrangement = Arrangement.spacedBy(5.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-   ) {
-      items(listActivity) { item ->
-         Button(onClick = { onClickActivity(item) }) {
-            Text(text = item.simpleName)
-         }
+  LazyColumn(
+    modifier = Modifier
+      .fillMaxSize()
+      .statusBarsPadding(),
+    verticalArrangement = Arrangement.spacedBy(5.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    items(listActivity) { item ->
+      Button(onClick = { onClickActivity(item) }) {
+        Text(text = item.simpleName)
       }
-   }
+    }
+  }
 }
 
 inline fun logMsg(block: () -> String) {
-   Log.i("retry-ktx-demo", block())
+  Log.i("retry-ktx-demo", block())
 }
